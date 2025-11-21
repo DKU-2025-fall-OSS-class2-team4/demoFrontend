@@ -1,0 +1,112 @@
+:root {
+  --card-bg: #ffffff;
+  --card-border: #e0e0e0;
+  --accent: #1976d2;
+  --accent-weak: #e3f2fd;
+  --text: #1f2933;
+  --muted: #5f6c72;
+  --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  --radius: 10px;
+}
+
+.mr-shell {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+}
+
+.mr-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  margin-top: 12px;
+}
+
+.mr-label {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.mr-input,
+.mr-select,
+.mr-textarea,
+.mr-range {
+  width: 100%;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 14px;
+  color: var(--text);
+  background: #fafafa;
+}
+
+.mr-range {
+  accent-color: var(--accent);
+  padding: 0;
+}
+
+.mr-button {
+  background: var(--accent);
+  color: white;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.mr-button:disabled {
+  background: #9fb8d6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.mr-button:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(25, 118, 210, 0.35);
+}
+
+.mr-summary {
+  margin-top: 16px;
+  text-align: left;
+  background: var(--accent-weak);
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.mr-log-box {
+  width: 100%;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 10px;
+  background: #0d1117;
+  color: #d1d5da;
+  font-family: monospace;
+  font-size: 12px;
+  resize: none;
+}
+
+.mr-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.mr-pill {
+  background: var(--accent-weak);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
