@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { apiRequest, getApiBase } from "./api/Backend.jsx";
 import "./massive.css";
 
 const defaultPayload = JSON.stringify({ content: "load-test" }, null, 2);
 const MIN_DURATION_MS = 10_000;
-const MAX_DURATION_MS = 300_000;
+const MAX_DURATION_MS = 120_000;
 const MIN_INVALID_PERCENT = 0.01;
 const MAX_INVALID_PERCENT = 1;
 
@@ -30,11 +30,17 @@ export default function MassiveRequests() {
   const [summary, setSummary] = useState(null);
   const [error, setError] = useState("");
   const [running, setRunning] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [currentRequests, setCurrentRequests] = useState(0);
+  const stopRequested = useRef(false);
 
   const handleRun = async () => {
     setError("");
     setSummary(null);
     setLogs("");
+    setProgress(0);
+    setCurrentRequests(0);
+    stopRequested.current = false;
     const trimmedPath = path.trim();
 
     if (!trimmedPath.startsWith("/")) {
@@ -46,7 +52,7 @@ export default function MassiveRequests() {
       return;
     }
     if (!Number.isFinite(durationMs) || durationMs < MIN_DURATION_MS || durationMs > MAX_DURATION_MS) {
-      setError("Duration must be between 10 seconds and 5 minutes.");
+      setError("Duration must be between 10 seconds and 2 minutes.");
       return;
     }
     if (!Number.isFinite(invalidPercent) || invalidPercent < MIN_INVALID_PERCENT || invalidPercent > MAX_INVALID_PERCENT) {
@@ -99,9 +105,13 @@ export default function MassiveRequests() {
     };
 
     const worker = async () => {
-      while (performance.now() < deadline) {
+      while (performance.now() < deadline && !stopRequested.current) {
         sent += 1;
         await makeTask(sent);
+        setCurrentRequests(sent);
+        const elapsed = performance.now() - start;
+        const progressPercent = Math.min(100, (elapsed / durationMs) * 100);
+        setProgress(progressPercent);
       }
     };
 
@@ -118,22 +128,40 @@ export default function MassiveRequests() {
       path: trimmedPath,
       method,
       invalidPercent,
+      stopped: stopRequested.current,
     });
     setRunning(false);
   };
 
+  const handleStop = () => {
+    stopRequested.current = true;
+  };
+
   return (
-    <div>
-      <p style={{ color: "#555" }}>
-        API base: <strong>{getApiBase()}</strong>
+    <div className="mr-container">
+      <h2 style={{ textAlign: "center", marginBottom: "10px" }}>Massive HTTP Request Runner</h2>
+      <p style={{ textAlign: "center", color: "#555", marginBottom: "20px" }}>
+        API base: <strong>{getApiBase() || "same origin"}</strong>
       </p>
 
-      <h2>Massive HTTP Request Runner</h2>
-      <p style={{ color: "#555" }}>
-        Blast requests for a fixed period against <strong>{getApiBase() || "same origin"}</strong>.
-      </p>
+      <div className={`mr-status-badge ${running ? "mr-status-running" : "mr-status-idle"}`} style={{ textAlign: "center", display: "block" }}>
+        {running ? "🔄 실행 중" : "⏸️ 대기 중"}
+      </div>
 
-      <div className="mr-grid">
+      {running && (
+        <div>
+          <div className="mr-progress-container">
+            <div className="mr-progress-bar" style={{ width: `${progress}%` }}></div>
+          </div>
+          <div className="mr-progress-text">
+            {progress.toFixed(1)}% • {currentRequests} requests sent
+          </div>
+        </div>
+      )}
+
+      <div className="mr-card">
+        <div className="mr-card-title">⚙️ Configuration</div>
+        <div className="mr-grid">
         <label className="mr-label">
           Endpoint Path
           <input className="mr-input" value={path} onChange={(e) => setPath(e.target.value)} />
@@ -160,80 +188,92 @@ export default function MassiveRequests() {
             onChange={(e) => setConcurrency(Number(e.target.value))}
           />
         </label>
-      </div>
+        </div>
 
-      <div className="mr-grid" style={{ marginTop: "10px" }}>
-        <label className="mr-label">
-          Run Duration ({(durationMs / 1000).toFixed(0)}s)
-          <input
-            className="mr-range"
-            type="range"
-            min={MIN_DURATION_MS}
-            max={MAX_DURATION_MS}
-            step={1000}
-            value={durationMs}
-            onChange={(e) => setDurationMs(Number(e.target.value))}
+        <div className="mr-grid" style={{ marginTop: "10px" }}>
+          <label className="mr-label">
+            Run Duration ({(durationMs / 1000).toFixed(0)}s)
+            <input
+              className="mr-range"
+              type="range"
+              min={MIN_DURATION_MS}
+              max={MAX_DURATION_MS}
+              step={1000}
+              value={durationMs}
+              onChange={(e) => setDurationMs(Number(e.target.value))}
+            />
+            <div className="mr-row">
+              <span className="mr-pill">10s</span>
+              <span className="mr-pill">2m</span>
+            </div>
+          </label>
+
+          <label className="mr-label">
+            Invalid Request Ratio ({invalidPercent.toFixed(2)}%)
+            <input
+              className="mr-range"
+              type="range"
+              min={MIN_INVALID_PERCENT}
+              max={MAX_INVALID_PERCENT}
+              step={0.01}
+              value={invalidPercent}
+              onChange={(e) => setInvalidPercent(Number(e.target.value))}
+            />
+            <div className="mr-row">
+              <span className="mr-pill">0.01%</span>
+              <span className="mr-pill">1%</span>
+            </div>
+          </label>
+        </div>
+
+        <label className="mr-label" style={{ marginTop: "12px" }}>
+          JSON Body (ignored for GET)
+          <textarea
+            className="mr-textarea"
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            rows={6}
           />
-          <div className="mr-row">
-            <span className="mr-pill">10s</span>
-            <span className="mr-pill">5m</span>
-          </div>
         </label>
 
-        <label className="mr-label">
-          Invalid Request Ratio ({invalidPercent.toFixed(2)}%)
-          <input
-            className="mr-range"
-            type="range"
-            min={MIN_INVALID_PERCENT}
-            max={MAX_INVALID_PERCENT}
-            step={0.01}
-            value={invalidPercent}
-            onChange={(e) => setInvalidPercent(Number(e.target.value))}
-          />
-          <div className="mr-row">
-            <span className="mr-pill">0.01%</span>
-            <span className="mr-pill">1%</span>
-          </div>
-        </label>
+        <div style={{ marginTop: "12px", display: "flex", gap: "10px", justifyContent: "center" }}>
+          <button className="mr-button" onClick={handleRun} disabled={running}>
+            {running ? "Running..." : `Run for ${(durationMs / 1000).toFixed(0)}s`}
+          </button>
+          <button className="mr-button-stop" onClick={handleStop} disabled={!running}>
+            Stop
+          </button>
+        </div>
       </div>
-
-      <label className="mr-label" style={{ marginTop: "12px" }}>
-        JSON Body (ignored for GET)
-        <textarea
-          className="mr-textarea"
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
-          rows={6}
-        />
-      </label>
-
-      <button className="mr-button" onClick={handleRun} disabled={running} style={{ marginTop: "12px" }}>
-        {running ? "Running..." : `Run for ${(durationMs / 1000).toFixed(0)}s`}
-      </button>
 
       {error && (
-        <div style={{ color: "red", marginTop: "10px" }}>
-          Error: {error}
+        <div className="mr-card" style={{ borderColor: "var(--danger)", background: "#fef2f2" }}>
+          <div className="mr-card-title" style={{ color: "var(--danger)", borderBottomColor: "var(--danger)" }}>
+            ❌ Error
+          </div>
+          <div style={{ color: "var(--danger)" }}>{error}</div>
         </div>
       )}
 
       {summary && (
-        <div className="mr-summary">
-          <strong>Summary</strong>
-          <div>Method: {summary.method}</div>
-          <div>Path: {summary.path}</div>
-          <div>API base: {summary.apiBase}</div>
-          <div>
-            Requests: {summary.count} (success: {summary.success}, failed: {summary.failed}) · Invalid target ratio: {summary.invalidPercent.toFixed(2)}%
+        <div className="mr-card" style={{ borderColor: summary.stopped ? "var(--warning)" : "var(--success)", background: summary.stopped ? "#fffbeb" : "#f0fdf4" }}>
+          <div className="mr-card-title" style={{ color: summary.stopped ? "var(--warning)" : "var(--success)", borderBottomColor: summary.stopped ? "var(--warning)" : "var(--success)" }}>
+            {summary.stopped ? "⚠️ summary (중단됨)" : "✅ summary"}
           </div>
-          <div>Concurrency: {summary.concurrency}</div>
-          <div>Duration: {summary.durationMs} ms</div>
+          <div style={{ display: "grid", gap: "8px", color: "var(--text)" }}>
+            <div><strong>메서드:</strong> {summary.method}</div>
+            <div><strong>경로:</strong> {summary.path}</div>
+            <div><strong>API 주소:</strong> {summary.apiBase}</div>
+            <div><strong>요청 수:</strong> {summary.count} (✅ 성공: {summary.success}, ❌ 실패: {summary.failed})</div>
+            <div><strong>잘못된 요청 비율:</strong> {summary.invalidPercent.toFixed(2)}%</div>
+            <div><strong>동시 실행:</strong> {summary.concurrency}</div>
+            <div><strong>소요 시간:</strong> {summary.durationMs} ms ({(summary.durationMs / 1000).toFixed(2)}초)</div>
+          </div>
         </div>
       )}
 
-      <div style={{ marginTop: "16px", textAlign: "left" }}>
-        <strong>Communication log</strong>
+      <div className="mr-card">
+        <div className="mr-card-title">📋 Communication Log</div>
         <textarea
           className="mr-log-box"
           value={logs}

@@ -3,10 +3,15 @@
   --card-border: #e0e0e0;
   --accent: #1976d2;
   --accent-weak: #e3f2fd;
+  --success: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
   --text: #1f2933;
   --muted: #5f6c72;
   --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.12);
   --radius: 10px;
+  --radius-sm: 8px;
 }
 
 .mr-shell {
@@ -25,6 +30,7 @@
 }
 
 .mr-label {
+  display: flex;
   text-align: left;
   width: 100%;
   flex-direction: column;
@@ -37,29 +43,45 @@
 .mr-input,
 .mr-textarea,
 .mr-range {
-  width: 90%;
+  width: 100%;
   border: 1px solid var(--card-border);
   border-radius: 8px;
   padding: 10px;
   font-size: 14px;
   color: var(--text);
   background: #fafafa;
+  box-sizing: border-box;
+}
+
+.mr-input:focus,
+.mr-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: #ffffff;
 }
 
 .mr-select {
-  width: 95%;
+  width: 100%;
   border: 1px solid var(--card-border);
   border-radius: 8px;
   padding: 10px;
   font-size: 14px;
   color: var(--text);
   background: #fafafa;
+  box-sizing: border-box;
+}
+
+.mr-select:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: #ffffff;
 }
 
 .mr-range {
   accent-color: var(--accent);
   padding: 0;
-  width: 95%;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .mr-button {
@@ -94,16 +116,16 @@
 }
 
 .mr-log-box {
-  width: 95%;
+  width: 100%;
   border: 1px solid var(--card-border);
   border-radius: 8px;
   padding: 10px;
-  margin: 0 auto;
   background: #0d1117;
   color: #d1d5da;
   font-family: monospace;
   font-size: 12px;
   resize: none;
+  box-sizing: border-box;
 }
 
 .mr-row {
@@ -120,4 +142,116 @@
   padding: 2px 10px;
   font-size: 12px;
   font-weight: 700;
+}
+
+/* Card Sections */
+.mr-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+  transition: box-shadow 0.3s ease;
+}
+
+.mr-card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.mr-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--accent-weak);
+}
+
+/* Progress Bar */
+.mr-progress-container {
+  width: 100%;
+  background: var(--card-border);
+  border-radius: 999px;
+  height: 8px;
+  overflow: hidden;
+  margin: 12px 0;
+}
+
+.mr-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--success));
+  border-radius: 999px;
+  transition: width 0.3s ease;
+  box-shadow: 0 0 10px rgba(25, 118, 210, 0.5);
+}
+
+.mr-progress-text {
+  font-size: 14px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 8px;
+  font-weight: 600;
+}
+
+/* Stop Button */
+.mr-button-stop {
+  background: var(--danger);
+  color: white;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.mr-button-stop:disabled {
+  background: #fca5a5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.mr-button-stop:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+  background: #dc2626;
+}
+
+/* Status Badge */
+.mr-status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+  margin: 12px 0;
+}
+
+.mr-status-running {
+  background: var(--warning);
+  color: white;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.mr-status-idle {
+  background: var(--card-border);
+  color: var(--muted);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Container */
+.mr-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
 }

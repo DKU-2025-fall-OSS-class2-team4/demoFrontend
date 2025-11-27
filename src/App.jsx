@@ -39,7 +39,7 @@ function App() {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h1>Demo Frontend</h1>
+      <h1 style={{ textAlign: "center" }}>Demo Frontend</h1>
       <div className="view-switcher">
         <button
           type="button"
@@ -60,47 +60,55 @@ function App() {
       </div>
 
       {view === "basic" && (
-        <>
-          <p style={{ color: "#555" }}>
-            API base: <strong>{getApiBase()}</strong>
+        <div className="crud-container">
+          <p style={{ textAlign: "center", color: "#555", marginBottom: "20px" }}>
+            API 주소: <strong>{getApiBase()}</strong>
           </p>
 
-          <div style={{ marginBottom: "20px" }}>
-            <h2>Insert Data</h2>
-            <input
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="Enter content"
-            />
-            <button onClick={handleCreate} style={{ marginLeft: "10px" }} disabled={loading}>
-              {loading ? "Sending..." : "Send"}
-            </button>
-            <button onClick={() => setResult(null)} style={{ marginLeft: "10px" }}>
-              Stop
-            </button>
-          </div>
-
-          <div style={{ marginBottom: "20px" }}>
-            <h2>Get Data</h2>
-            <input
-              value={id}
-              onChange={(e) => setId(e.target.value)}
-              placeholder="Enter ID"
-            />
-            <button onClick={handleGet} style={{ marginLeft: "10px" }} disabled={loading}>
-              {loading ? "Fetching..." : "Fetch"}
-            </button>
-          </div>
-
           {error && (
-            <div style={{ color: "red", marginBottom: "10px" }}>
-              Error: {error}
+            <div className="crud-error">
+              ❌ 오류: {error}
             </div>
           )}
 
-          <h3>Result</h3>
-          <pre>{result ? JSON.stringify(result, null, 2) : "No result"}</pre>
-        </>
+          <div className="crud-card">
+            <div className="crud-card-title">➕ 데이터 추가</div>
+            <input
+              className="crud-input"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="내용을 입력하세요"
+            />
+            <div className="flex flex-col contecrud-button-group">
+              <button className="crud-button" onClick={handleCreate} disabled={loading}>
+                {loading ? "전송 중..." : "전송"}
+              </button>
+              <button className="crud-button-clear" onClick={() => { setResult(null); setError(""); }}>
+                초기화
+              </button>
+            </div>
+          </div>
+
+          <div className="crud-card">
+            <div className="crud-card-title">🔍 데이터 조회</div>
+            <input
+              className="crud-input"
+              value={id}
+              onChange={(e) => setId(e.target.value)}
+              placeholder="ID를 입력하세요"
+            />
+            <button className="crud-button" onClick={handleGet} disabled={loading}>
+              {loading ? "조회 중..." : "조회"}
+            </button>
+          </div>
+
+          <div className="crud-card">
+            <div className="crud-card-title">📋 결과</div>
+            <pre className="crud-result-box">
+              {result ? JSON.stringify(result, null, 2) : "결과가 없습니다"}
+            </pre>
+          </div>
+        </div>
       )}
 
       {view === "massive" && <MassiveRequests />}
