@@ -18,25 +18,49 @@
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
 .card {
   padding: 2em;
 }
 
 .read-the-docs {
   color: #888;
+}
+
+.view-switcher {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  justify-content: center;
+}
+
+.tab-button {
+  border: 1px solid #d0d7de;
+  background: #ffffff;
+  color: #0f172a;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color 160ms ease, box-shadow 160ms ease, color 160ms ease,
+    transform 120ms ease;
+  font-weight: 600;
+}
+
+.tab-button:hover {
+  border-color: #60a5fa;
+  color: #0b4fb9;
+}
+
+.tab-button:active {
+  transform: translateY(1px);
+}
+
+.tab-button.active {
+  border-color: #1d4ed8;
+  box-shadow: 0 0 0 3px #bfdbfe;
+  color: #0b4fb9;
+}
+
+.tab-button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px #bfdbfe;
 }

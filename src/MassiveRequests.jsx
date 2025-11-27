@@ -123,8 +123,12 @@ export default function MassiveRequests() {
   };
 
   return (
-    <div className="mr-shell">
-      <h2>Massive HTTP Runner</h2>
+    <div>
+      <p style={{ color: "#555" }}>
+        API base: <strong>{getApiBase()}</strong>
+      </p>
+
+      <h2>Massive HTTP Request Runner</h2>
       <p style={{ color: "#555" }}>
         Blast requests for a fixed period against <strong>{getApiBase() || "same origin"}</strong>.
       </p>

@@ -40,11 +40,21 @@ function App() {
   return (
     <div style={{ padding: "20px" }}>
       <h1>Demo Frontend</h1>
-      <div style={{ display: "flex", gap: "10px", marginBottom: "16px" }}>
-        <button disabled={view === "basic"} onClick={() => setView("basic")}>
+      <div className="view-switcher">
+        <button
+          type="button"
+          className={`tab-button ${view === "basic" ? "active" : ""}`}
+          aria-pressed={view === "basic"}
+          onClick={() => setView("basic")}
+        >
           Basic CRUD
         </button>
-        <button disabled={view === "massive"} onClick={() => setView("massive")}>
+        <button
+          type="button"
+          className={`tab-button ${view === "massive" ? "active" : ""}`}
+          aria-pressed={view === "massive"}
+          onClick={() => setView("massive")}
+        >
           Massive HTTP
         </button>
       </div>
@@ -64,6 +74,9 @@ function App() {
             />
             <button onClick={handleCreate} style={{ marginLeft: "10px" }} disabled={loading}>
               {loading ? "Sending..." : "Send"}
+            </button>
+            <button onClick={() => setResult(null)} style={{ marginLeft: "10px" }}>
+              Stop
             </button>
           </div>
 
