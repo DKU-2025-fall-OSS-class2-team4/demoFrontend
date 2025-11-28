@@ -43,7 +43,7 @@ function App() {
       <h1 style={{ textAlign: "center" }}>Demo Frontend</h1>
       <div style={{ textAlign: "center", marginBottom: "20px" }}>
         <a href='http://localhost:3000' >
-          <img src = {Grafana_icon} height = '15px'></img> Grafana 페이지로 이동
+          <img src = {Grafana_icon} height = '15px'></img> Grafana 대시보드 페이지로 이동
         </a>
       </div>
 
