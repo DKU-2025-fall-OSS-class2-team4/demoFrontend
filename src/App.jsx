@@ -10,6 +10,7 @@ function App() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [view, setView] = useState("basic");
+  const Grafana_icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Grafana_icon.svg/1969px-Grafana_icon.svg.png";
 
   const handleCreate = async () => {
     setLoading(true);
@@ -40,6 +41,12 @@ function App() {
   return (
     <div style={{ padding: "20px" }}>
       <h1 style={{ textAlign: "center" }}>Demo Frontend</h1>
+      <div style={{ textAlign: "center", marginBottom: "20px" }}>
+        <a href='http://localhost:3000' >
+          <img src = {Grafana_icon} height = '15px'></img> Grafana 페이지로 이동
+        </a>
+      </div>
+
       <div className="view-switcher">
         <button
           type="button"
