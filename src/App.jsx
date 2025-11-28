@@ -10,7 +10,10 @@ function App() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [view, setView] = useState("basic");
-  const Grafana_icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Grafana_icon.svg/1969px-Grafana_icon.svg.png";
+  const grafanaIcon = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Grafana_icon.svg/1969px-Grafana_icon.svg.png";
+  const grafanaUrl =
+    import.meta.env.VITE_GRAFANA_URL ||
+    `http://${window.location.hostname}:3000`;
 
   const handleCreate = async () => {
     setLoading(true);
@@ -42,8 +45,8 @@ function App() {
     <div style={{ padding: "20px" }}>
       <h1 style={{ textAlign: "center" }}>Demo Frontend</h1>
       <div style={{ textAlign: "center", marginBottom: "20px" }}>
-        <a href='http://localhost:3000' >
-          <img src = {Grafana_icon} height = '15px'></img> Grafana 대시보드 페이지로 이동
+        <a href= {grafanaUrl} >
+          <img src = {grafanaIcon} height = '15px'></img> Grafana 대시보드 페이지로 이동
         </a>
       </div>
 

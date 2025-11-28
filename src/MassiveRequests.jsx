@@ -6,7 +6,7 @@ const defaultPayload = JSON.stringify({ content: "load-test" }, null, 2);
 const MIN_DURATION_MS = 10_000;
 const MAX_DURATION_MS = 120_000;
 const MIN_INVALID_PERCENT = 0.01;
-const MAX_INVALID_PERCENT = 1;
+const MAX_INVALID_PERCENT = 100.0;
 
 const randomString = () => Math.random().toString(36).slice(2, 10);
 
@@ -221,7 +221,7 @@ export default function MassiveRequests() {
             />
             <div className="mr-row">
               <span className="mr-pill">0.01%</span>
-              <span className="mr-pill">1%</span>
+              <span className="mr-pill">100%</span>
             </div>
           </label>
         </div>
